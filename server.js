@@ -2,10 +2,15 @@ require('dotenv').config()
 const express = require('express')
 const PORT = process.env.PORT
 
+const userRouter = require('./routes/user')
+const jobRouter = require('./routes/job')
 
 const app = express()
 app.use(express.json())
 
+
+app.use('/api/v1/user', userRouter)
+app.use('/api/v1/job', jobRouter)
 
 const mongoose = require('mongoose')
 
