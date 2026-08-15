@@ -13,6 +13,7 @@ exports.createJob = async (req, res) => {
         const {title,description,location,jobType,skills,requirements,salary} = req.body
 
         const newJob = await jobModel({
+            userId,
             title,
             description,
             location,
@@ -30,7 +31,7 @@ exports.createJob = async (req, res) => {
 
     }catch(error) {
         console.log(error.message);
-        res.status(500),json({
+        res.status(500).json({
             message: "Something went wrong"
         })
     }
@@ -79,7 +80,7 @@ exports.deleteJob = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const job = await Job.findById(id);
+        const job = await jobModel.findById(id);
 
         if (!job) {
             return res.status(404).json({
@@ -87,13 +88,13 @@ exports.deleteJob = async (req, res) => {
             });
         }
 
-        if (job.employer.toString() !== req.user.id) {
+        if (job.userId.toString() !== req.user.id) {
             return res.status(403).json({
                 message: "You are not authorized to delete this job"
             });
         }
 
-        await Job.findByIdAndDelete(id);
+        await jobModel.findByIdAndDelete(id);
 
         return res.status(200).json({
             message: "Job deleted successfully"
