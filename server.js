@@ -4,6 +4,7 @@ const PORT = process.env.PORT
 
 const userRouter = require('./routes/user')
 const jobRouter = require('./routes/job')
+const resumeRouter = require('./routes/resume')
 
 const app = express()
 app.use(express.json())
@@ -11,6 +12,7 @@ app.use(express.json())
 
 app.use('/api/v1/user', userRouter)
 app.use('/api/v1/job', jobRouter)
+app.use('/api/v1/resume', resumeRouter)
 
 const mongoose = require('mongoose')
 
