@@ -118,3 +118,42 @@ exports.createJobValidator = (req, res, next) => {
     }
     next()
 }
+
+exports.createResumeValidator = (req, res, next) => {
+    const schema = joi.object({
+        fileName: joi.string().trim().min(1).required().messages({
+            'string.base': 'File name must be a string',
+            'string.empty': 'File name is required',
+            'string.min': 'File name is required',
+            'any.required': 'File name is required'
+        }),
+        fileUrl: joi.string().trim().uri({ scheme: ['http', 'https'] }).required().messages({
+            'string.base': 'File URL must be a string',
+            'string.empty': 'File URL is required',
+            'string.uri': 'Please provide a valid file URL',
+            'any.required': 'File URL is required'
+        }),
+        fileType: joi.string().valid(
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ).required().messages({
+            'any.only': 'File type must be PDF or Word document',
+            'string.empty': 'File type is required',
+            'any.required': 'File type is required'
+        }),
+        skills: joi.array().items(joi.string().trim().min(1)).min(1).optional().messages({
+            'array.min': 'Skills must contain at least one item'
+        }),
+        experience: joi.string().trim().allow('').optional(),
+        education: joi.string().trim().allow('').optional()
+    })
+
+    const { error } = schema.validate(req.body)
+    if (error) {
+        return res.status(400).json({
+            message: error.details[0].message
+        })
+    }
+    next()
+}

@@ -21,7 +21,8 @@ exports.submitResume = async (req, res) => {
         } = req.body
 
         const newResume = await resumeModel({
-            fileName,
+            userId,
+              fileName,
             fileUrl,
             fileType,
             skills,
