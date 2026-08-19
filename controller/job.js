@@ -1,5 +1,6 @@
 const jobModel = require('../model/job')
 const userModel = require('../model/user')
+const notificationModel = require('../model/notification')
 
 exports.createJob = async (req, res) => {
     try{
@@ -24,6 +25,19 @@ exports.createJob = async (req, res) => {
         })
 
         await newJob.save()
+
+        // Every candidate receives an in-app notification when an employer posts a job.
+        const candidates = await userModel.find({ role: 'candidate' }).select('_id')
+        if (candidates.length) {
+            await notificationModel.insertMany(candidates.map((candidate) => ({
+                recipientId: candidate._id,
+                type: 'new_job',
+                title: 'New job opportunity',
+                message: `A new ${newJob.title} position is available in ${newJob.location}.`,
+                jobId: newJob._id
+            })))
+        }
+
         res.status(200).json({
             message: "Job created successfully",
             data: newJob

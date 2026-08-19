@@ -1,8 +1,9 @@
 const router = require('express').Router()
-const {application} = require('../controller/application')
-const {authenticate, } = require('../middleware/validation')
-const {} = require('../middleware/auth')
+const { application, updateApplicationStatus } = require('../controller/application')
+const {} = require('../middleware/validation')
+const { authenticate, candidateAuth, employerAuth } = require('../middleware/auth')
 
-router.post('/', application)
+router.post('/:jobId/:resumeId', authenticate, candidateAuth, application)
+router.patch('/:applicationId/status', authenticate, employerAuth, updateApplicationStatus)
 
 module.exports = router
